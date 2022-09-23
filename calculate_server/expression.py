@@ -3,12 +3,12 @@ class Expression:
     String = ""
     def __init__(self, str):
         # str이 수식이 아니면 에러
-        if not self.isExpression(str):
+        if not self.is_expression(str):
             raise Exception("Not Expression")
         else:
             self.String = str
 
-    def isExpression(self, str):
+    def is_expression(self, str):
         # str이 수식이면 True, 아니면 False
         # 1. str의 길이가 0이면 False
         if len(str) == 0:
@@ -19,5 +19,5 @@ class Expression:
 
         return True
     
-    def toString(self):
+    def to_string(self):
         return self.String
