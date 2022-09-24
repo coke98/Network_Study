@@ -1,5 +1,4 @@
 import socket
-import threading
 
 HEADER = 64
 ADD_SUB_SERVER_PORT = 6051
