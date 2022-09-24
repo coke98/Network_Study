@@ -6,7 +6,7 @@ class expression:
     def __init__(self, str):
         # str이 수식이 아니면 에러
         if not self.is_expression(str):
-            raise Exception("Not Expression")
+            raise Exception("수식이 아닙니다.")
         else:
             self.string = str
 
