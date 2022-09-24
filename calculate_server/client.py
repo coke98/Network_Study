@@ -1,5 +1,4 @@
 import socket
-from calculate_server.add_sub_server import MAIN_SERVER_PORT
 from expression import Expression
 
 HEADER = 64

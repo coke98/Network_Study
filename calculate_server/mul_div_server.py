@@ -19,18 +19,29 @@ def handle_client(client, addr):
         msg_length = client.recv(HEADER).decode(FORMAT)
         if msg_length:
             msg_length = int(msg_length)
-            msg = client.recv(msg_length).decode(FORMAT)
-            print(f"[{addr}] {msg}")
-            client.send("Msg receivec".encode(FORMAT))
+            exp = client.recv(msg_length).decode(FORMAT)
+            result = calculate(exp)
+            result_msg = exp + " = " + str(result)
+            print(result_msg)
+            client.send(result_msg.encode(FORMAT))
     client.close()
 
 def start():
     server.listen()
-    print(f"[LISTENiNG] Server is listening on {HOST}")
+    print(f"Mul,Div Server is listening")
     while True:
         client, addr  = server.accept()
         thread = threading.Thread(target=handle_client, args=(client, addr))
         thread.start()
+
+def calculate(exp):
+    if "*" in exp:
+        exp = exp.split("*")
+        result = int(exp[0]) * int(exp[1])
+    elif "/" in exp:
+        exp = exp.split("/")
+        result = int(exp[0]) / int(exp[1])
+    return result
 
 print("startng...")
 start()

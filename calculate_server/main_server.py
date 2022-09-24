@@ -14,9 +14,6 @@ server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 # 포트 연결
 server.bind((HOST, CLIENT_PORT))
 
-# server 포트 출력
-print(server.getsockname()[1])
-
 def handle_client(client, addr):
     print(f"[NEW CONNECTION] {addr} connected")
     connected = True
@@ -24,10 +21,10 @@ def handle_client(client, addr):
         msg_length = client.recv(HEADER).decode(FORMAT)
         if msg_length:
             msg_length = int(msg_length)
-            msg = client.recv(msg_length).decode(FORMAT)
-            print(f"[{addr}] {msg}")
-            send(msg)
-            client.send("Msg receivec".encode(FORMAT))
+            exp = client.recv(msg_length).decode(FORMAT)
+            # print(f"[{addr}] {exp}")
+            result_msg = send(exp)
+            client.send(result_msg.encode(FORMAT))
     client.close()
 
 def start():
@@ -39,19 +36,35 @@ def start():
         thread.start()
         print(f"[ACTIVE CONNECTIONS] {threading.active_count() - 1}")
 
+# 수식을 구분하여 각 서버에 전송
+def send(exp):
+    # msg 가 +, - 를 포함하면 add_sub_server 로 전송
+    if '+' in exp or '-' in exp:
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_socket.connect((HOST, ADD_SUB_SERVER_PORT))
+        message = exp.encode(FORMAT)
+        msg_length = len(message)
+        send_length = str(msg_length).encode(FORMAT)
+        send_length += b' ' * (HEADER - len(send_length))
+        client_socket.send(send_length)
+        client_socket.send(message)
+        return_msg = client_socket.recv(2048).decode(FORMAT)
+        print(return_msg)
+        return return_msg
 
-def send(msg):
-
-    ADDR = (HOST, ADD_SUB_SERVER_PORT)
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect(ADDR)
-    message = msg.encode(FORMAT)
-    msg_length = len(message)
-    send_length = str(msg_length).encode(FORMAT)
-    send_length += b' ' * (HEADER - len(send_length))
-    client_socket.send(send_length)
-    client_socket.send(message)
-    print(client_socket.recv(2048).decode(FORMAT))
+    # msg 가 *, / 를 포함 하면 mul_div_server 로 전송
+    elif '*' in exp or '/' in exp:
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_socket.connect((HOST, MUL_DIV_SERVER_PORT))
+        message = exp.encode(FORMAT)
+        msg_length = len(message)
+        send_length = str(msg_length).encode(FORMAT)
+        send_length += b' ' * (HEADER - len(send_length))
+        client_socket.send(send_length)
+        client_socket.send(message)
+        return_msg = client_socket.recv(2048).decode(FORMAT)
+        print(return_msg)
+        return return_msg
 
 print("startng...")
 start()
