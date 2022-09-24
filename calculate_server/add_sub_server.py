@@ -6,7 +6,7 @@ MAIN_SERVER_PORT = 5051
 HOST = socket.gethostbyname(socket.gethostname())
 FORMAT = 'utf-8'
 
-# TCP socket
+# UDP socket
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 # 포트 연결
